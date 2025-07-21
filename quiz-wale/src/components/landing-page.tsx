@@ -61,7 +61,7 @@ export function LandingPage({ onShowAuthForm }: LandingPageProps) {
             </div>
           </div>
           <div className="mx-auto grid max-w-5xl items-stretch gap-8 py-12 sm:grid-cols-2 lg:grid-cols-3">
-            <Card className="flex flex-col items-center p-6 text-center hover:shadow-lg transition-shadow h-full">
+            <Card className="flex flex-col items-center p-6 text-center hover:shadow-lg transition-shadow h-full bg-gradient-to-br from-blue-50 to-indigo-100">
               <CardHeader className="flex flex-col  items-center">
                 <BookOpen className="h-10 w-10 text-primary mb-4" />
                 <CardTitle className="text-xl ">Diverse Quizzes</CardTitle>
@@ -72,7 +72,7 @@ export function LandingPage({ onShowAuthForm }: LandingPageProps) {
                 </p>
               </CardContent>
             </Card>
-            <Card className="flex flex-col items-center p-6 text-center hover:shadow-lg transition-shadow h-full">
+            <Card className="flex flex-col items-center p-6 text-center hover:shadow-lg transition-shadow h-full bg-gradient-to-br from-blue-50 to-indigo-100">
              <CardHeader className="flex flex-col  items-center">
                 <BarChart3 className="h-10 w-10 text-primary mb-4" />
                 <CardTitle className="text-xl">Detailed Analytics</CardTitle>
@@ -83,7 +83,7 @@ export function LandingPage({ onShowAuthForm }: LandingPageProps) {
                 </p>
               </CardContent>
             </Card>
-            <Card className="flex flex-col items-center p-6 text-center hover:shadow-lg transition-shadow h-full">
+            <Card className="flex flex-col items-center p-6 text-center hover:shadow-lg transition-shadow h-full bg-gradient-to-br from-blue-50 to-indigo-100">
                  <CardHeader className="flex flex-col  items-center">
                 <Trophy className="h-10 w-10 text-primary mb-4" />
                 <CardTitle className="text-xl">Global Leaderboards</CardTitle>
@@ -94,7 +94,7 @@ export function LandingPage({ onShowAuthForm }: LandingPageProps) {
                 </p>
               </CardContent>
             </Card>
-            <Card className="flex flex-col items-center p-6 text-center hover:shadow-lg transition-shadow h-full">
+            <Card className="flex flex-col items-center p-6 text-center hover:shadow-lg transition-shadow h-full bg-gradient-to-br from-blue-50 to-indigo-100">
                 <CardHeader className="flex flex-col  items-center">
                 <Users className="h-10 w-10 text-primary mb-4" />
                 <CardTitle className="text-xl">User Profiles</CardTitle>
@@ -105,7 +105,7 @@ export function LandingPage({ onShowAuthForm }: LandingPageProps) {
                 </p>
               </CardContent>
             </Card>
-            <Card className="flex flex-col items-center p-6 text-center hover:shadow-lg transition-shadow h-full">
+            <Card className="flex flex-col items-center p-6 text-center hover:shadow-lg transition-shadow h-full bg-gradient-to-br from-blue-50 to-indigo-100">
                  <CardHeader className="flex flex-col  items-center">
                 <Zap className="h-10 w-10 text-primary mb-4" />
                 <CardTitle className="text-xl">Fast & Responsive</CardTitle>
@@ -116,7 +116,7 @@ export function LandingPage({ onShowAuthForm }: LandingPageProps) {
                 </p>
               </CardContent>
             </Card>
-            <Card className="flex flex-col items-center p-6 text-center hover:shadow-lg transition-shadow h-full">
+            <Card className="flex flex-col items-center p-6 text-center hover:shadow-lg transition-shadow h-full bg-gradient-to-br from-blue-50 to-indigo-100">
                  <CardHeader className="flex flex-col  items-center">
                 <ShieldCheck className="h-10 w-10 text-primary mb-4" />
                 <CardTitle className="text-xl">Secure & Reliable</CardTitle>
@@ -161,10 +161,10 @@ export function LandingPage({ onShowAuthForm }: LandingPageProps) {
         <p className="text-xs text-gray-500 dark:text-gray-400">© {new Date().getFullYear()} QuizWale. All rights reserved.</p>
         <p className="text-xs text-gray-400 ml-auto">Created by <span className="underline text-gray-600">SAMAR HIRAU</span></p>
         <nav className="sm:ml-auto flex gap-4 sm:gap-6">
-          <Link className="text-xs hover:underline underline-offset-4 text-gray-600 dark:text-gray-400" href="#">
+          <Link className="text-xs hover:underline underline-offset-4 text-gray-600 dark:text-gray-400" href="/privacy">
             Privacy
           </Link>
-          <Link className="text-xs hover:underline underline-offset-4 text-gray-600 dark:text-gray-400" href="#">
+          <Link className="text-xs hover:underline underline-offset-4 text-gray-600 dark:text-gray-400" href="/terms">
             Terms of Service
           </Link>
         </nav>
