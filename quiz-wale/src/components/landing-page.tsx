@@ -3,8 +3,10 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { BookOpen, BarChart3, Trophy, Users, Zap, ShieldCheck } from "lucide-react"
+import { BookOpen, BarChart3, Trophy, Users, Zap, ShieldCheck, BrainCircuit } from "lucide-react"
 import Link from "next/link"
+import { ModeToggle } from "./mode-toggle"
+
 
 interface LandingPageProps {
   onShowAuthForm: (tab: "login" | "register") => void // New prop to trigger AuthForm visibility and set tab
@@ -13,10 +15,24 @@ interface LandingPageProps {
 export function LandingPage({ onShowAuthForm }: LandingPageProps) {
   return (
     <div className="flex flex-col min-h-screen">
+      
+      
       {/* Hero Section */}
+      
       <section className="relative w-full py-12 md:py-24 lg:py-32 xl:py-48 bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
-       
+          
         <div className="container px-4 md:px-6 text-center">
+          <div className="flex items-center space-x-2 fixed top-4 left-4 z-50">
+              
+              <BrainCircuit className="h-6 w-6 text-primary" />
+              <span className="text-xl font-bold ">QuizWale</span>
+            </div>
+
+           
+            <div className="fixed top-4 right-4 z-50">
+              <ModeToggle />
+            </div>
+
           <div className="max-w-3xl mx-auto space-y-6">
             <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl leading-tight">
               Challenge Your Knowledge with QuizWale
@@ -61,7 +77,7 @@ export function LandingPage({ onShowAuthForm }: LandingPageProps) {
             </div>
           </div>
           <div className="mx-auto grid max-w-5xl items-stretch gap-8 py-12 sm:grid-cols-2 lg:grid-cols-3">
-            <Card className="flex flex-col items-center p-6 text-center hover:shadow-lg transition-shadow h-full bg-gradient-to-br from-blue-50 to-indigo-100">
+            <Card className="flex flex-col items-center p-6 text-center hover:shadow-lg transition-shadow h-full bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
               <CardHeader className="flex flex-col  items-center">
                 <BookOpen className="h-10 w-10 text-primary mb-4" />
                 <CardTitle className="text-xl ">Diverse Quizzes</CardTitle>
@@ -72,7 +88,7 @@ export function LandingPage({ onShowAuthForm }: LandingPageProps) {
                 </p>
               </CardContent>
             </Card>
-            <Card className="flex flex-col items-center p-6 text-center hover:shadow-lg transition-shadow h-full bg-gradient-to-br from-blue-50 to-indigo-100">
+            <Card className="flex flex-col items-center p-6 text-center hover:shadow-lg transition-shadow h-full bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
              <CardHeader className="flex flex-col  items-center">
                 <BarChart3 className="h-10 w-10 text-primary mb-4" />
                 <CardTitle className="text-xl">Detailed Analytics</CardTitle>
@@ -83,7 +99,7 @@ export function LandingPage({ onShowAuthForm }: LandingPageProps) {
                 </p>
               </CardContent>
             </Card>
-            <Card className="flex flex-col items-center p-6 text-center hover:shadow-lg transition-shadow h-full bg-gradient-to-br from-blue-50 to-indigo-100">
+            <Card className="flex flex-col items-center p-6 text-center hover:shadow-lg transition-shadow h-full bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
                  <CardHeader className="flex flex-col  items-center">
                 <Trophy className="h-10 w-10 text-primary mb-4" />
                 <CardTitle className="text-xl">Global Leaderboards</CardTitle>
@@ -94,7 +110,7 @@ export function LandingPage({ onShowAuthForm }: LandingPageProps) {
                 </p>
               </CardContent>
             </Card>
-            <Card className="flex flex-col items-center p-6 text-center hover:shadow-lg transition-shadow h-full bg-gradient-to-br from-blue-50 to-indigo-100">
+            <Card className="flex flex-col items-center p-6 text-center hover:shadow-lg transition-shadow h-full bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
                 <CardHeader className="flex flex-col  items-center">
                 <Users className="h-10 w-10 text-primary mb-4" />
                 <CardTitle className="text-xl">User Profiles</CardTitle>
@@ -105,7 +121,7 @@ export function LandingPage({ onShowAuthForm }: LandingPageProps) {
                 </p>
               </CardContent>
             </Card>
-            <Card className="flex flex-col items-center p-6 text-center hover:shadow-lg transition-shadow h-full bg-gradient-to-br from-blue-50 to-indigo-100">
+            <Card className="flex flex-col items-center p-6 text-center hover:shadow-lg transition-shadow h-full bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
                  <CardHeader className="flex flex-col  items-center">
                 <Zap className="h-10 w-10 text-primary mb-4" />
                 <CardTitle className="text-xl">Fast & Responsive</CardTitle>
@@ -116,7 +132,7 @@ export function LandingPage({ onShowAuthForm }: LandingPageProps) {
                 </p>
               </CardContent>
             </Card>
-            <Card className="flex flex-col items-center p-6 text-center hover:shadow-lg transition-shadow h-full bg-gradient-to-br from-blue-50 to-indigo-100">
+            <Card className="flex flex-col items-center p-6 text-center hover:shadow-lg transition-shadow h-full bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
                  <CardHeader className="flex flex-col  items-center">
                 <ShieldCheck className="h-10 w-10 text-primary mb-4" />
                 <CardTitle className="text-xl">Secure & Reliable</CardTitle>

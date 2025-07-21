@@ -4,6 +4,8 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/components/auth-provider";
+import { ThemeProvider } from "@/components/theme-provider"
+import { Toaster } from "sonner"
 
 // Import Poppins font
 const poppins = Poppins({
@@ -34,9 +36,12 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={poppins.className}>
-        <AuthProvider>
-          {children}
-        </AuthProvider>
+         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          <AuthProvider>
+            {children}
+            <Toaster position="top-right" richColors />
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
