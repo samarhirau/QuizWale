@@ -11,7 +11,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useToast } from "@/hooks/use-toast"
 import { Mail, Lock, User, BrainCircuit } from "lucide-react"
-import { useSearchParams } from "next/navigation" 
+import { useSearchParams } from "next/navigation"
+
+import { useRouter } from "next/navigation"
+
 
 interface AuthFormProps {
   initialTab?: "login" | "register" 
@@ -22,6 +25,8 @@ export function AuthForm({ initialTab }: AuthFormProps) {
   const { login, register } = useAuth()
   const { toast } = useToast()
   const searchParams = useSearchParams()
+  const router = useRouter()
+
 
   // Determine the default tab: prioritize the prop, then URL search param, then default to 'login'
   const defaultTab = initialTab || (searchParams.get("tab") === "register" ? "register" : "login")
@@ -48,6 +53,7 @@ export function AuthForm({ initialTab }: AuthFormProps) {
         title: "Welcome back!",
         description: "You have been successfully logged in.",
       })
+       router.push("/dashboard")
     } catch (error: any) {
       toast({
         title: "Login failed",
@@ -79,6 +85,7 @@ export function AuthForm({ initialTab }: AuthFormProps) {
         title: "Account created!",
         description: "Welcome to Quizwale.",
       })
+       router.push("/dashboard")
     } catch (error: any) {
       toast({
         title: "Registration failed",
