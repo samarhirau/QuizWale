@@ -261,7 +261,10 @@ export function Leaderboard() {
 
                     <div className="flex items-center space-x-3">
                       <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-                        <span className="font-semibold text-primary">{entry.name.charAt(0).toUpperCase()}</span>
+<span className="font-semibold text-primary">
+  {entry.name && entry.name.charAt(0).toUpperCase()}
+</span>
+
                       </div>
                       <div>
                         <h3 className="font-semibold">{entry.name}</h3>

@@ -6,13 +6,129 @@ import { Badge } from "@/components/ui/badge"
 import { BookOpen, BarChart3, Trophy, Users, Zap, ShieldCheck, BrainCircuit } from "lucide-react"
 import Link from "next/link"
 import { ModeToggle } from "./mode-toggle"
+import { useEffect, useState } from "react"
 
+
+interface Quiz {
+  _id: string;
+  title: string;
+  category: string;
+  difficulty?: string;
+  duration: number;
+  questions?: any[];
+  createdBy?: { name?: string };
+}
+
+interface Category {
+  name: string;
+  count: number;
+  quizzes: Quiz[];
+}
+
+interface Stats {
+  totalQuizzes: number;
+  totalCategories: number;
+  recentQuizzes: Quiz[];
+  popularQuizzes: Quiz[];
+  topRatedQuizzes: Quiz[];
+}
 
 interface LandingPageProps {
   onShowAuthForm: (tab: "login" | "register") => void // New prop to trigger AuthForm visibility and set tab
 }
 
 export function LandingPage({ onShowAuthForm }: LandingPageProps) {
+
+  const [quizzes, setQuizzes] = useState<Quiz[]>([])
+  const [categories, setCategories] = useState<Category[]>([])
+  const [loading, setLoading] = useState(true)
+  const [stats, setStats] = useState<Stats>({
+    totalQuizzes: 0,
+    totalCategories: 0,
+    recentQuizzes: [],
+    popularQuizzes: [],
+    topRatedQuizzes: [],
+  })
+
+  useEffect(() => {
+    fetchData()
+  }, [])
+
+  const fetchData = async () => {
+    try {
+      setLoading(true)
+
+      // Fetch all quizzes
+      const quizzesResponse = await fetch("/api/quizzes?limit=50")
+      const quizzesData = await quizzesResponse.json()
+
+      if (quizzesData.quizzes) {
+        const allQuizzes = quizzesData.quizzes
+        setQuizzes(allQuizzes)
+
+        // Extract unique categories
+        const uniqueCategories = [...new Set(allQuizzes.map((quiz: { category: any }) => quiz.category))]
+        const categoryData = uniqueCategories.map((cat) => ({
+          name: String(cat),
+          count: allQuizzes.filter((quiz: { category: unknown }) => quiz.category === cat).length,
+          quizzes: allQuizzes.filter((quiz: { category: unknown }) => quiz.category === cat),
+        }))
+        setCategories(categoryData)
+
+        // Calculate stats
+        const recentQuizzes = allQuizzes.slice(0, 5)
+        const popularQuizzes = [...allQuizzes]
+          .sort((a, b) => (b.questions?.length || 0) - (a.questions?.length || 0))
+          .slice(0, 5)
+        const topRatedQuizzes = [...allQuizzes].slice(0, 5) // You can add rating logic here
+
+        setStats({
+          totalQuizzes: allQuizzes.length,
+          totalCategories: uniqueCategories.length,
+          recentQuizzes,
+          popularQuizzes,
+          topRatedQuizzes,
+        })
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+   const getDifficultyColor = (difficulty: string | undefined) => {
+    switch (difficulty?.toLowerCase()) {
+      case "easy":
+        return "bg-green-500"
+      case "medium":
+        return "bg-orange-500"
+      case "hard":
+        return "bg-red-500"
+      default:
+        return "bg-blue-500"
+    }
+  }
+
+  const getDifficultyBadge = (difficulty: string | undefined) => {
+    return difficulty?.toUpperCase() || "MEDIUM"
+  }
+
+  const formatDuration = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60)
+    return `${minutes} min`
+  }
+
+  if (loading) {
+    return (
+      <div className="w-full min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-400">Loading quizzes...</p>
+        </div>
+      </div>
+    )
+  }
   return (
     <div className="flex flex-col min-h-screen">
       
@@ -143,6 +259,303 @@ export function LandingPage({ onShowAuthForm }: LandingPageProps) {
                 </p>
               </CardContent>
             </Card>
+          </div>
+        </div>
+      </section>
+
+       {/* Quiz Categories Section */}
+      <section className="w-full py-12 md:py-24 lg:py-32 bg-gray-50 dark:bg-gray-900">
+        <div className="container px-4 md:px-6">
+          <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
+            <Badge variant="secondary" className="px-3 py-1 text-sm">
+              Popular Categories
+            </Badge>
+            <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">Explore Quiz Categories</h2>
+            <p className="max-w-[900px] text-gray-600 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
+              Discover quizzes across various topics and challenge yourself in your favorite subjects.
+            </p>
+          </div>
+
+          {/* Recently Published */}
+          <div className="mb-12">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-2xl font-bold">Recently Published</h3>
+              <Link href="/quizzes" className="text-primary hover:underline text-sm font-medium">
+                See all ({stats.totalQuizzes})
+              </Link>
+            </div>
+            <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+              {stats.recentQuizzes.map((quiz, index) => (
+                <div key={quiz._id} className="flex-shrink-0 w-64">
+                  <Card className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
+                    <div className="relative">
+                      <img
+                        src={`/placeholder.svg?height=120&width=256&text=${encodeURIComponent(quiz.title)}`}
+                        alt={quiz.title}
+                        className="w-full h-32 object-cover"
+                      />
+                      <Badge
+                        className={`absolute top-2 left-2 ${getDifficultyColor(quiz.difficulty)} text-white text-xs`}
+                      >
+                        {getDifficultyBadge(quiz.difficulty)}
+                      </Badge>
+                    </div>
+                    <CardContent className="p-4">
+                      <h4 className="font-semibold text-sm mb-2 truncate">{quiz.title}</h4>
+                      <div className="flex items-center justify-between text-xs text-gray-600 dark:text-gray-400">
+                        <div className="flex items-center gap-1">
+                          <span className="text-yellow-500">★</span>
+                          <span>4.2</span>
+                        </div>
+                      </div>
+                      <div className="mt-2 text-xs text-gray-500">
+                        {quiz.questions?.length || 0} questions • {formatDuration(quiz.duration)}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              ))}
+              {stats.recentQuizzes.length === 0 && (
+                <div className="text-center text-gray-500 w-full py-8">No quizzes available yet.</div>
+              )}
+            </div>
+          </div>
+
+          {/* Popular Categories */}
+          <div>
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-2xl font-bold">Popular Categories</h3>
+              <Link href="/categories" className="text-primary hover:underline text-sm font-medium">
+                See all ({stats.totalCategories})
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {categories.slice(0, 8).map((category, index) => (
+                <Card key={category.name} className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
+                  <div className="relative">
+                    <img
+                      src={`/placeholder.svg?height=120&width=300&text=${encodeURIComponent(category.name)}`}
+                      alt={category.name}
+                      className="w-full h-32 object-cover"
+                    />
+                    <Badge className="absolute top-2 left-2 bg-blue-500 text-white text-xs">CATEGORY</Badge>
+                  </div>
+                  <CardContent className="p-4">
+                    <h4 className="font-semibold mb-2">{category.name}</h4>
+                    <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
+                      <div className="flex items-center gap-1">
+                        <span className="text-yellow-500">★</span>
+                        <span>4.1</span>
+                      </div>
+                      <span>{category.count} quizzes</span>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+              {categories.length === 0 && (
+                <div className="col-span-full text-center text-gray-500 py-8">No categories available yet.</div>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Interactive Voting Banner */}
+      <section className="w-full py-8 bg-gradient-to-r from-teal-700 to-teal-600 dark:from-teal-800 dark:to-teal-700">
+        <div className="container px-4 md:px-6">
+          <div className="flex items-center justify-between">
+            <div className="text-white">
+              <h3 className="text-2xl md:text-3xl font-bold mb-2">Can't decide? Let players vote</h3>
+            </div>
+            <Button className="bg-orange-400 hover:bg-orange-500 text-black font-semibold px-6 py-3 rounded-full">
+              Start vote mode
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Category Navigation */}
+      <section className="w-full py-8 bg-white dark:bg-gray-950 border-b">
+        <div className="container px-4 md:px-6">
+          <div className="flex items-center justify-center gap-8 overflow-x-auto pb-4">
+            <div className="flex flex-col items-center gap-2 min-w-fit cursor-pointer hover:text-primary">
+              <div className="w-12 h-12 bg-orange-100 dark:bg-orange-900 rounded-full flex items-center justify-center">
+                <BookOpen className="h-6 w-6 text-orange-600" />
+              </div>
+              <span className="text-sm font-medium">Start</span>
+            </div>
+            <div className="flex flex-col items-center gap-2 min-w-fit cursor-pointer hover:text-primary">
+              <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center">
+                <BrainCircuit className="h-6 w-6 text-purple-600" />
+              </div>
+              <span className="text-sm font-medium">Art & Literature</span>
+            </div>
+            <div className="flex flex-col items-center gap-2 min-w-fit cursor-pointer hover:text-primary">
+              <div className="w-12 h-12 bg-yellow-100 dark:bg-yellow-900 rounded-full flex items-center justify-center">
+                <Trophy className="h-6 w-6 text-yellow-600" />
+              </div>
+              <span className="text-sm font-medium">Entertainment</span>
+            </div>
+            <div className="flex flex-col items-center gap-2 min-w-fit cursor-pointer hover:text-primary">
+              <div className="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center">
+                <Zap className="h-6 w-6 text-green-600" />
+              </div>
+              <span className="text-sm font-medium">Geography</span>
+            </div>
+            <div className="flex flex-col items-center gap-2 min-w-fit cursor-pointer hover:text-primary">
+              <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
+                <ShieldCheck className="h-6 w-6 text-blue-600" />
+              </div>
+              <span className="text-sm font-medium">History</span>
+            </div>
+            <div className="flex flex-col items-center gap-2 min-w-fit cursor-pointer hover:text-primary">
+              <div className="w-12 h-12 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center">
+                <Users className="h-6 w-6 text-red-600" />
+              </div>
+              <span className="text-sm font-medium">Languages</span>
+            </div>
+            <div className="flex flex-col items-center gap-2 min-w-fit cursor-pointer hover:text-primary">
+              <div className="w-12 h-12 bg-teal-100 dark:bg-teal-900 rounded-full flex items-center justify-center">
+                <BarChart3 className="h-6 w-6 text-teal-600" />
+              </div>
+              <span className="text-sm font-medium">Science & Nature</span>
+            </div>
+            <div className="flex flex-col items-center gap-2 min-w-fit cursor-pointer hover:text-primary">
+              <div className="w-12 h-12 bg-orange-100 dark:bg-orange-900 rounded-full flex items-center justify-center">
+                <Trophy className="h-6 w-6 text-orange-600" />
+              </div>
+              <span className="text-sm font-medium">Sports</span>
+            </div>
+            <div className="flex flex-col items-center gap-2 min-w-fit cursor-pointer hover:text-primary">
+              <div className="w-12 h-12 bg-pink-100 dark:bg-pink-900 rounded-full flex items-center justify-center">
+                <BrainCircuit className="h-6 w-6 text-pink-600" />
+              </div>
+              <span className="text-sm font-medium">Trivia</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Create Quiz Feature Cards */}
+      <section className="w-full py-12 bg-gray-50 dark:bg-gray-900">
+        <div className="container px-4 md:px-6">
+          <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            <Card className="bg-gradient-to-br from-blue-200 to-blue-300 border-0 overflow-hidden">
+              <CardContent className="p-8 flex items-center gap-6">
+                <div className="flex-shrink-0">
+                  <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center">
+                    <BookOpen className="h-10 w-10 text-white" />
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-2xl font-bold mb-2">Create a quiz</h3>
+                  <p className=" mb-4">Play for free with 300 participants</p>
+                  <Button className="bg-green-500 hover:bg-green-600  font-semibold px-6 py-2 rounded-full">
+                    Quiz editor
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gradient-to-br from-teal-700 to-teal-800 border-0 overflow-hidden">
+              <CardContent className="p-8 flex items-center gap-6">
+                <div className="flex-shrink-0">
+                  <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center">
+                    <BrainCircuit className="h-10 w-10 text-white" />
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-2xl font-bold mb-2">A.I.</h3>
+                  <p className="text-teal-100 mb-4">Generate a quiz from any subject or pdf</p>
+                  <Button className="bg-cyan-400 hover:bg-cyan-500 text-black font-semibold px-6 py-2 rounded-full">
+                    Quiz generator
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Best Rating Right Now */}
+      <section className="w-full py-12 bg-white dark:bg-gray-950">
+        <div className="container px-4 md:px-6">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-2xl font-bold">Best rating right now</h3>
+          </div>
+          <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+            {stats.topRatedQuizzes.map((quiz) => (
+              <div key={quiz._id} className="flex-shrink-0 w-64">
+                <Card className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
+                  <div className="relative">
+                    <img
+                      src={`/placeholder.svg?height=120&width=256&text=${encodeURIComponent(quiz.title)}`}
+                      alt={quiz.title}
+                      className="w-full h-32 object-cover"
+                    />
+                    <Badge
+                      className={`absolute top-2 left-2 ${getDifficultyColor(quiz.difficulty)} text-white text-xs`}
+                    >
+                      {getDifficultyBadge(quiz.difficulty)}
+                    </Badge>
+                  </div>
+                  <CardContent className="p-4">
+                    <h4 className="font-semibold text-sm mb-2 truncate">{quiz.title}</h4>
+                    <div className="flex items-center justify-between text-xs text-gray-600 dark:text-gray-400">
+                      <div className="flex items-center gap-1">
+                        <span className="text-yellow-500">★</span>
+                        <span>4.3</span>
+                      </div>
+                      <span>By {quiz.createdBy?.name || "Admin"}</span>
+                    </div>
+                    <div className="mt-2 text-xs text-gray-500">
+                      {quiz.category} • {quiz.questions?.length || 0} questions
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Popular Right Now */}
+      <section className="w-full py-12 bg-gray-50 dark:bg-gray-900">
+        <div className="container px-4 md:px-6">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-2xl font-bold">Popular right now</h3>
+          </div>
+          <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+            {stats.popularQuizzes.map((quiz) => (
+              <div key={quiz._id} className="flex-shrink-0 w-64">
+                <Card className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
+                  <div className="relative">
+                    <img
+                      src={`/placeholder.svg?height=120&width=256&text=${encodeURIComponent(quiz.title)}`}
+                      alt={quiz.title}
+                      className="w-full h-32 object-cover"
+                    />
+                    <Badge
+                      className={`absolute top-2 left-2 ${getDifficultyColor(quiz.difficulty)} text-white text-xs`}
+                    >
+                      {getDifficultyBadge(quiz.difficulty)}
+                    </Badge>
+                  </div>
+                  <CardContent className="p-4">
+                    <h4 className="font-semibold text-sm mb-2 truncate">{quiz.title}</h4>
+                    <div className="flex items-center justify-between text-xs text-gray-600 dark:text-gray-400">
+                      <div className="flex items-center gap-1">
+                        <span className="text-yellow-500">★</span>
+                        <span>3.9</span>
+                      </div>
+                    </div>
+                    <div className="mt-2 text-xs text-gray-500">
+                      {quiz.category} • {formatDuration(quiz.duration)}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            ))}
           </div>
         </div>
       </section>

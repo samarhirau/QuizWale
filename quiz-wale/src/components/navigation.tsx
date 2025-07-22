@@ -71,7 +71,7 @@ import { useAuth } from "@/components/auth-provider"
 import { Button } from "@/components/ui/button"
 import { ModeToggle } from "@/components/mode-toggle"
 import { LogoutConfirmDialog } from "@/components/logout-dialog" // Import the new component
-import { LayoutDashboard, Trophy, Settings, BarChart3, LogOut, BookOpen } from "lucide-react"
+import { LayoutDashboard, Trophy, Settings, BarChart3, LogOut, BookOpen, BrainCircuit } from "lucide-react"
 
 interface NavigationProps {
   currentView: string
@@ -105,8 +105,8 @@ export function Navigation({ currentView, onViewChange }: NavigationProps) {
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center space-x-8">
             <div className="flex items-center space-x-2">
-              <BookOpen className="h-6 w-6 text-primary" />
-              <span className="text-xl font-bold">QuizMaster Pro</span>
+               <BrainCircuit className="h-6 w-6 text-primary" />
+             <span className="text-xl font-bold ">QuizWale</span>
             </div>
 
             <div className="hidden md:flex space-x-4">
