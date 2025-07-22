@@ -33,7 +33,11 @@ interface UserStats {
   recentSubmissions: any[]
 }
 
-export default function DashboardPage() {
+
+interface DashboardProps {
+  onStartQuiz: (id: string, viewType?: "quiz" | "submission-details") => void
+}
+export default function DashboardPage({onStartQuiz} :DashboardProps) {
   const { user } = useAuth()
   const [quizzes, setQuizzes] = useState<Quiz[]>([])
   const [userStats, setUserStats] = useState<UserStats | null>(null)
@@ -233,10 +237,11 @@ export default function DashboardPage() {
                       ))}
                     </div>
 
-                    <Button className="w-full" onClick={() => onStartQuiz(quiz._id)}>
-                      <Play className="h-4 w-4 mr-2" />
-                      Start Quiz
-                    </Button>
+                  <Button className="w-full" onClick={() => handleStartQuiz(quiz._id)}>
+  <Play className="h-4 w-4 mr-2" />
+  Start Quiz
+</Button>
+
                   </div>
                 </CardContent>
               </Card>

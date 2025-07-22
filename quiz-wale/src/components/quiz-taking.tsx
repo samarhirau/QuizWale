@@ -245,7 +245,7 @@ export function QuizTaking({ quizId, onComplete }: QuizTakingProps) {
 
             <div className="flex justify-center space-x-4">
               <Button onClick={onComplete}>Back to Dashboard</Button>
-              <Button variant="outline" onClick={() => (window.location.href = "/leaderboard")}>
+              <Button variant="outline" onClick={() => (window.location.href = "/dashboard/#leaderboard")}>
                 View Leaderboard
               </Button>
             </div>
