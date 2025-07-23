@@ -1,4 +1,3 @@
-
 import mongoose from "mongoose";
 
 const questionSchema = new mongoose.Schema({
@@ -14,10 +13,6 @@ const questionSchema = new mongoose.Schema({
   correctAnswer: {
     type: String,
     required: true,
-  },
-  imageUrl: {
-    type: String,
-    default: "",
   },
   explanation: {
     type: String,
@@ -37,18 +32,27 @@ const quizSchema = new mongoose.Schema(
     duration: { type: Number, required: true },
     questions: [questionSchema],
     isActive: { type: Boolean, default: true },
-    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    difficulty: { type: String, enum: ["easy", "medium", "hard"], default: "medium" },
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    difficulty: {
+      type: String,
+      enum: ["easy", "medium", "hard"],
+      default: "medium",
+    },
     tags: { type: [String], default: [] },
-    rating: { type: Number, default: 0, min: 0, max: 5 }, // ✅ ← THIS MUST EXIST
+    rating: { type: Number, default: 0, min: 0, max: 5 }, 
     maxAttempts: { type: Number, default: 1 },
+    imageUrl: {
+      type: String,
+      default: "",
+    },
   },
   {
     timestamps: true,
   }
 );
-
-
-
 
 export default mongoose.models.Quiz || mongoose.model("Quiz", quizSchema);

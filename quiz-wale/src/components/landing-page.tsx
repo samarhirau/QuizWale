@@ -11,6 +11,7 @@ import { useAuth } from "@/components/auth-provider"
 
 
 interface Quiz {
+  imageUrl: string
   rating: string
   _id: string;
   title: string;
@@ -335,12 +336,15 @@ useEffect(() => {
             <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
               {stats.recentQuizzes.map((quiz, index) => (
                 <div key={quiz._id} className="flex-shrink-0 w-64">
-                  <Card className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
+                  <Card className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer py-0 gap-1">
                     <div className="relative">
-                      <img
-                        src={`/placeholder.svg?height=120&width=256&text=${encodeURIComponent(quiz.title)}`}
+                       <img
+                        src={
+                          quiz.imageUrl ||
+                          `/placeholder.svg?height=120&width=256&text=${encodeURIComponent(quiz.title) || "/placeholder.svg"}`
+                        }
                         alt={quiz.title}
-                        className="w-full h-32 object-cover"
+                        className="w-full h-50 object-cover"
                       />
                       <Badge
                         className={`absolute top-2 left-2 ${getDifficultyColor(quiz.difficulty)} text-white text-xs`}
@@ -348,7 +352,7 @@ useEffect(() => {
                         {getDifficultyBadge(quiz.difficulty)}
                       </Badge>
                     </div>
-                    <CardContent className="p-4">
+                    <CardContent className="py-2 px-4">
                       <h4 className="font-semibold text-sm mb-2 truncate">{quiz.title}</h4>
                       <div className="flex items-center justify-between text-xs text-gray-600 dark:text-gray-400">
                         <div className="flex items-center gap-1">

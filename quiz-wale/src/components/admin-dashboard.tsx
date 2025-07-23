@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge"
 import { useToast } from "@/hooks/use-toast"
 import { Plus, Edit, Trash2, Save, X, BookOpen, Users, BarChart3, Clock, Target, Star } from "lucide-react"
-import { log } from "console"
+import {ImageUpload} from "@/components/image-upload"
 
 interface Question {
   questionText: string
@@ -37,6 +37,7 @@ interface Quiz {
     _id: string
     name: string
   }
+  imageUrl : string
   createdAt?: string
   updatedAt?: string
 }
@@ -69,6 +70,7 @@ export function AdminDashboard() {
     isActive: true,
     maxAttempts: 1,
     rating: 4.0,
+    imageUrl : ""
   })
 
   
@@ -78,7 +80,6 @@ export function AdminDashboard() {
     questionText: "",
     options: ["", "", "", ""],
     correctAnswer: "",
-    imageUrl: "",
     explanation: "",
   })
 
@@ -248,7 +249,6 @@ export function AdminDashboard() {
       questionText: "",
       options: ["", "", "", ""],
       correctAnswer: "",
-      imageUrl: "",
       explanation: "",
     })
 
@@ -277,12 +277,12 @@ export function AdminDashboard() {
       isActive: true,
       maxAttempts: 1,
       rating: 4.0,
+      imageUrl : ""
     })
     setNewQuestion({
       questionText: "",
       options: ["", "", "", ""],
       correctAnswer: "",
-      imageUrl: "",
       explanation: "",
     })
   }
@@ -534,6 +534,18 @@ export function AdminDashboard() {
 
               </div>
 
+                 <div className="space-y-2">
+                      <Label htmlFor="imageUrl" className="text-sm font-medium">
+                        Image URL (optional)
+                      </Label>
+                      {/* Image Upload Component */}
+                  <ImageUpload
+                    value={newQuiz.imageUrl || ""}
+                    onChange={(url) => setNewQuiz({ ...newQuiz, imageUrl: url })}
+                    onRemove={() => setNewQuiz({ ...newQuiz, imageUrl: "" })}
+                  />
+                    </div>
+
               {/* Tags Input */}
               <div className="space-y-2">
                 <Label htmlFor="tags" className="text-sm font-medium">
@@ -570,6 +582,7 @@ export function AdminDashboard() {
                     {newQuiz.questions.length} question{newQuiz.questions.length !== 1 ? "s" : ""} added
                   </Badge>
                 )}
+                
               </div>
 
               <Card className="bg-gray-50 dark:bg-gray-800/50 border-dashed">
@@ -645,18 +658,7 @@ export function AdminDashboard() {
                         </SelectContent>
                       </Select>
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="imageUrl" className="text-sm font-medium">
-                        Image URL (optional)
-                      </Label>
-                      <Input
-                        id="imageUrl"
-                        value={newQuestion.imageUrl}
-                        onChange={(e) => setNewQuestion({ ...newQuestion, imageUrl: e.target.value })}
-                        placeholder="https://example.com/image.jpg"
-                        className="bg-white dark:bg-gray-900 h-11"
-                      />
-                    </div>
+                 
                   </div>
 
                   <div className="space-y-2">
