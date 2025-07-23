@@ -151,6 +151,14 @@ export function AuthForm({ initialTab }: AuthFormProps) {
                 <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading ? "Signing in..." : "Sign In"}
                 </Button>
+                <Button 
+  type="button"
+  variant="outline"
+  className="w-full"
+  onClick={() => { window.history.back() }}
+> 
+  <span>Cancel</span>
+</Button>
               </form>
             </TabsContent>
             <TabsContent value="register">
@@ -216,9 +224,18 @@ export function AuthForm({ initialTab }: AuthFormProps) {
                     />
                   </div>
                 </div>
+                
                 <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading ? "Creating account..." : "Create Account"}
                 </Button>
+<Button 
+  type="button"
+  variant="outline"
+  className="w-full"
+  onClick={() => { window.history.back() }}
+> 
+  <span>Cancel</span>
+</Button>
               </form>
             </TabsContent>
           </Tabs>

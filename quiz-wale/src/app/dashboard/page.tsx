@@ -495,7 +495,7 @@ export default function DashboardPage({ onStartQuiz }: DashboardProps) {
   return (
     <>
       <Navigation currentView={currentView} onViewChange={setCurrentView} />
-      <main className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <main className="min-h-screen  bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 ">
         {currentView === "dashboard" && (
           <div className="space-y-8">
             {/* Hero Section */}
@@ -516,7 +516,7 @@ export default function DashboardPage({ onStartQuiz }: DashboardProps) {
                     <Button
                       size="lg"
                       variant="outline"
-                      className="border-white text-white hover:bg-white hover:text-blue-600 bg-transparent"
+                      className="border-white text-white hover:bg-white hover:text-black bg-transparent"
                       onClick={() => setCurrentView("leaderboard")}
                     >
                       <Trophy className="h-5 w-5 mr-2" />
@@ -529,7 +529,7 @@ export default function DashboardPage({ onStartQuiz }: DashboardProps) {
 
             <div className="container mx-auto px-4">
               {/* Stats Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 -mt-8 mb-12">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6  mb-12 mt-2">
                 <Card className="bg-white dark:bg-gray-800 shadow-lg border-0">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">Total Score</CardTitle>

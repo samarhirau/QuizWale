@@ -17,7 +17,7 @@ export function generateToken(payload: JWTPayload): string {
 export function verifyToken(token: string): JWTPayload | null {
   try {
     const decoded = jwt.verify(token, JWT_SECRET) as JWTPayload
-    console.log("Decoded token payload:", decoded)
+    // console.log("Decoded token payload:", decoded)
     return decoded
   } catch (error) {
     return null
@@ -33,11 +33,11 @@ export async function comparePassword(password: string, hash: string): Promise<b
 }
 
 export async function getServerSession(): Promise<JWTPayload | null> {
-  console.log("getServerSession called")
+  // console.log("getServerSession called")
   const cookieStore = await cookies()
   const token = cookieStore.get("auth-token")?.value
 
-  console.log("Auth token from cookie:", token)
+  // console.log("Auth token from cookie:", token)
 
   if (!token) return null
 

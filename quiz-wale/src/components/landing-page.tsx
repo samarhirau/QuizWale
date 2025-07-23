@@ -7,9 +7,11 @@ import { BookOpen, BarChart3, Trophy, Users, Zap, ShieldCheck, BrainCircuit } fr
 import Link from "next/link"
 import { ModeToggle } from "./mode-toggle"
 import { useEffect, useState } from "react"
+import { useAuth } from "@/components/auth-provider"
 
 
 interface Quiz {
+  rating: string
   _id: string;
   title: string;
   category: string;
@@ -31,6 +33,7 @@ interface Stats {
   recentQuizzes: Quiz[];
   popularQuizzes: Quiz[];
   topRatedQuizzes: Quiz[];
+  participants: number;
 }
 
 interface LandingPageProps {
@@ -48,7 +51,11 @@ export function LandingPage({ onShowAuthForm }: LandingPageProps) {
     recentQuizzes: [],
     popularQuizzes: [],
     topRatedQuizzes: [],
+    participants : 0,
+
   })
+  const { user } = useAuth()
+
 
   useEffect(() => {
     fetchData()
@@ -88,6 +95,8 @@ export function LandingPage({ onShowAuthForm }: LandingPageProps) {
           recentQuizzes,
           popularQuizzes,
           topRatedQuizzes,
+          participants: allQuizzes.reduce((acc: any, quiz: { questions: string | any[] }) => acc + (quiz.questions?.length || 0), 0),
+     
         })
       }
     } catch (error) {
@@ -118,6 +127,8 @@ export function LandingPage({ onShowAuthForm }: LandingPageProps) {
     const minutes = Math.floor(seconds / 60)
     return `${minutes} min`
   }
+
+  
 
   if (loading) {
     return (
@@ -164,9 +175,11 @@ export function LandingPage({ onShowAuthForm }: LandingPageProps) {
                 onClick={() => {
                   onShowAuthForm("register") // Show AuthForm and set to register tab
                   document.getElementById("auth-form")?.scrollIntoView({ behavior: "smooth" }) // Scroll to it
+                  user ? window.location.href = "/dashboard" : onShowAuthForm("register") 
                 }}
+                // ref removed; handle navigation in onClick if needed
               >
-                Get Started
+                {user ? "Go to Dashboard" : "Get Started"}
               </Button>
               <Link href="#features-section">
                 <Button size="lg" variant="outline" className="px-8 py-3 text-lg bg-transparent">
@@ -176,7 +189,25 @@ export function LandingPage({ onShowAuthForm }: LandingPageProps) {
             </div>
           </div>
         </div>
+
+          {/* Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-2xl mx-auto mt-12">
+              <div className="text-center">
+                <div className="text-3xl font-bold text-blue-600 mb-2">{stats.totalQuizzes}+</div>
+                <div className="text-muted-foreground">Active Quizzes</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-purple-600 mb-2">{stats.participants}+</div>
+                <div className="text-muted-foreground">Happy Learners</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-green-600 mb-2">{stats.totalQuizzes}+</div>
+                <div className="text-muted-foreground">Quiz Attempts</div>
+              </div>
+            </div>
       </section>
+
+          
 
       {/* Features Section */}
       <section id="features-section" className="w-full py-12 md:py-24 lg:py-32 bg-white dark:bg-gray-950">
@@ -305,7 +336,7 @@ export function LandingPage({ onShowAuthForm }: LandingPageProps) {
                       <div className="flex items-center justify-between text-xs text-gray-600 dark:text-gray-400">
                         <div className="flex items-center gap-1">
                           <span className="text-yellow-500">★</span>
-                          <span>4.2</span>
+                          <span>{quiz.rating || "N/A"}</span>
                         </div>
                       </div>
                       <div className="mt-2 text-xs text-gray-500">
@@ -345,7 +376,7 @@ export function LandingPage({ onShowAuthForm }: LandingPageProps) {
                     <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
                       <div className="flex items-center gap-1">
                         <span className="text-yellow-500">★</span>
-                        <span>4.1</span>
+                        <span>{(category.quizzes.reduce((acc, quiz) => acc + (Number(quiz.rating) || 0), 0) / category.count).toFixed(1) || "N/A"}</span>
                       </div>
                       <span>{category.count} quizzes</span>
                     </div>
@@ -504,7 +535,7 @@ export function LandingPage({ onShowAuthForm }: LandingPageProps) {
                     <div className="flex items-center justify-between text-xs text-gray-600 dark:text-gray-400">
                       <div className="flex items-center gap-1">
                         <span className="text-yellow-500">★</span>
-                        <span>4.3</span>
+                        <span>{quiz.rating || "N/A"}</span>
                       </div>
                       <span>By {quiz.createdBy?.name || "Admin"}</span>
                     </div>
@@ -546,7 +577,7 @@ export function LandingPage({ onShowAuthForm }: LandingPageProps) {
                     <div className="flex items-center justify-between text-xs text-gray-600 dark:text-gray-400">
                       <div className="flex items-center gap-1">
                         <span className="text-yellow-500">★</span>
-                        <span>3.9</span>
+                        
                       </div>
                     </div>
                     <div className="mt-2 text-xs text-gray-500">

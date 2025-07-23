@@ -113,7 +113,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession()
-    console.log("Session in POST /api/quizzes:", session)
+    // console.log("Session in POST /api/quizzes:", session)
 
     if (!session || session.role !== "admin") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
