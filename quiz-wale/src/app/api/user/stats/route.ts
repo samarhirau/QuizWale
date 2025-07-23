@@ -1,39 +1,35 @@
-import { type NextRequest, NextResponse } from "next/server"
+
+
+import { NextResponse } from "next/server"
+ import { getServerSession } from "@/lib/auth"
 import connectDB from "@/lib/mongodb"
+import User from "@/models/User"
+import Quiz from "@/models/Quiz"
 import Submission from "@/models/Submission"
-import { getServerSession } from "@/lib/auth"
 
-export async function GET(request: NextRequest) {
-  try {
-    const session = await getServerSession()
+export async function GET() {
+  await connectDB()
 
-    if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
+  const session = await getServerSession()
 
-    await connectDB()
+  const participants = await User.countDocuments()
+  const totalQuizzes = await Quiz.countDocuments()
+  const totalSubmissions = await Submission.countDocuments()
 
-    // Get user's submissions
-    const submissions = await Submission.find({ userId: session.userId })
-      .populate("quizId", "title category")
-      .sort({ createdAt: -1 })
+  // Default stat values
+  let totalScore = 0
+  let averageScore = 0
+  let rank = 0
+  let recentSubmissions = []
 
-    // Calculate stats
-    const totalSubmissions = submissions.length
-    const totalScore = submissions.reduce((sum, s) => sum + s.score, 0)
-    const averageScore = totalSubmissions > 0 ? Math.round((totalScore / totalSubmissions) * 100) / 100 : 0
+  if (session) {
+    const userSubmissions = await Submission.find({ userId: session.userId }).sort({ createdAt: -1 }).limit(5)
+    recentSubmissions = userSubmissions
 
-    // Get recent submissions (last 5)
-    const recentSubmissions = submissions.slice(0, 5).map((s) => ({
-      id: s._id,
-      quiz: s.quizId,
-      score: s.score,
-      percentage: s.percentage,
-      timeSpent: s.timeSpent,
-      completedAt: s.completedAt,
-    }))
+    totalScore = userSubmissions.reduce((acc: any, curr: { score: any }) => acc + curr.score, 0)
+    averageScore = userSubmissions.length > 0 ? totalScore / userSubmissions.length : 0
 
-    // Calculate rank (simplified - in production you'd want to cache this)
+    // Fetch scores of all users and rank
     const allUserScores = await Submission.aggregate([
       {
         $group: {
@@ -41,21 +37,20 @@ export async function GET(request: NextRequest) {
           totalScore: { $sum: "$score" },
         },
       },
-      { $sort: { totalScore: -1 } },
+      { $sort: { totalScore: -1, _id: 1 } }, 
     ])
 
-    const userRank = allUserScores.findIndex((u) => u._id.toString() === session.userId) + 1
-
-    const stats = {
-      totalScore,
-      averageScore,
-      rank: userRank || 0,
-      recentSubmissions,
-    }
-
-    return NextResponse.json(stats)
-  } catch (error) {
-    console.error("User stats error:", error)
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+    rank = allUserScores.findIndex((u: { _id: { toString: () => any } }) => u._id.toString() === session.userId) + 1
   }
+
+  return NextResponse.json({
+    participants,
+    totalQuizzes,
+    totalSubmissions,
+    totalScore,
+    averageScore,
+    rank,
+    recentSubmissions,
+  })
 }
+

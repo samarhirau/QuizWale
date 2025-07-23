@@ -54,7 +54,20 @@ export function LandingPage({ onShowAuthForm }: LandingPageProps) {
     participants : 0,
 
   })
-  const { user } = useAuth()
+const { user } = useAuth()
+ const [stat, setStat] = useState({ participants: 0, totalSubmissions: 0 });
+
+  
+
+useEffect(() => {
+  const fetchStat = async () => {
+    const res = await fetch("/api/user/stats");
+    const data = await res.json();
+    setStat(data);
+  };
+
+  fetchStat();
+}, []);
 
 
   useEffect(() => {
@@ -128,6 +141,8 @@ export function LandingPage({ onShowAuthForm }: LandingPageProps) {
     return `${minutes} min`
   }
 
+
+  
   
 
   if (loading) {
@@ -197,11 +212,13 @@ export function LandingPage({ onShowAuthForm }: LandingPageProps) {
                 <div className="text-muted-foreground">Active Quizzes</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-purple-600 mb-2">{stats.participants}+</div>
+                <div className="text-3xl font-bold text-purple-600 mb-2">
+               {stat.participants ?? 0}
+                  +</div>
                 <div className="text-muted-foreground">Happy Learners</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-green-600 mb-2">{stats.totalQuizzes}+</div>
+                <div className="text-3xl font-bold text-green-600 mb-2">{stat.totalSubmissions}+</div>
                 <div className="text-muted-foreground">Quiz Attempts</div>
               </div>
             </div>
