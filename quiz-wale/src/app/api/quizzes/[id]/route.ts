@@ -1,59 +1,94 @@
 import { type NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/mongodb";
 import Quiz from "@/models/Quiz";
+import Submission from "@/models/Submission";
+import { getServerSession } from "@/lib/auth";
 
-// GET a quiz by ID
+// GET Handler
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  await connectDB();
-
   try {
-    const quiz = await Quiz.findById(params.id);
+    const { id } = await params;
+    await connectDB();
+    const session = await getServerSession();
+    const quiz = await Quiz.findById(id).populate("createdBy", "name");
+
     if (!quiz) {
       return NextResponse.json({ error: "Quiz not found" }, { status: 404 });
     }
-    return NextResponse.json(quiz);
+
+    if (!session || session.role !== "admin") {
+      quiz.questions = quiz.questions.map((q: any) => ({
+        ...q.toObject(),
+        correctAnswer: undefined,
+      }));
+    }
+
+    return NextResponse.json({ quiz });
   } catch (error) {
-    return NextResponse.json({ error: "Server error", details: String(error) }, { status: 500 });
+    console.error("GET error:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
-// UPDATE a quiz by ID
+// PUT Handler
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  await connectDB();
-
   try {
-    const data = await request.json();
-    const updatedQuiz = await Quiz.findByIdAndUpdate(params.id, data, { new: true });
+    const session = await getServerSession();
+    if (!session || session.role !== "admin") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-    if (!updatedQuiz) {
+    const updates = await request.json();
+    const { id } = await params;
+    await connectDB();
+
+    const quiz = await Quiz.findByIdAndUpdate(id, updates, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!quiz) {
       return NextResponse.json({ error: "Quiz not found" }, { status: 404 });
     }
-    return NextResponse.json(updatedQuiz);
+
+    return NextResponse.json({ quiz });
   } catch (error) {
-    return NextResponse.json({ error: "Server error", details: String(error) }, { status: 500 });
+    console.error("Update quiz error:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
-// DELETE a quiz by ID
+// DELETE Handler
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  await connectDB();
-
   try {
-    const deletedQuiz = await Quiz.findByIdAndDelete(params.id);
-    if (!deletedQuiz) {
+    const session = await getServerSession();
+    if (!session || session.role !== "admin") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { id } = await params;
+    await connectDB();
+
+    const quiz = await Quiz.findByIdAndDelete(id);
+
+    if (!quiz) {
       return NextResponse.json({ error: "Quiz not found" }, { status: 404 });
     }
+
+    await Submission.deleteMany({ quizId: id });
+
     return NextResponse.json({ message: "Quiz deleted successfully" });
   } catch (error) {
-    return NextResponse.json({ error: "Server error", details: String(error) }, { status: 500 });
+    console.error("Delete quiz error:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
