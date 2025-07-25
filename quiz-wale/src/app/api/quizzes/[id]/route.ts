@@ -7,10 +7,10 @@ import { getServerSession } from "@/lib/auth";
 // GET Handler
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  context: { params: { id: string } }
 ) {
   try {
-    const { id } = await params;
+    const { id } = context.params;
     await connectDB();
     const session = await getServerSession();
     const quiz = await Quiz.findById(id).populate("createdBy", "name");
@@ -36,7 +36,7 @@ export async function GET(
 // PUT Handler
 export async function PUT(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  context: { params: { id: string } }
 ) {
   try {
     const session = await getServerSession();
@@ -45,7 +45,7 @@ export async function PUT(
     }
 
     const updates = await request.json();
-    const { id } = await params;
+    const { id } = context.params;
     await connectDB();
 
     const quiz = await Quiz.findByIdAndUpdate(id, updates, {
@@ -67,7 +67,7 @@ export async function PUT(
 // DELETE Handler
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  context: { params: { id: string } }
 ) {
   try {
     const session = await getServerSession();
@@ -75,7 +75,7 @@ export async function DELETE(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { id } = await params;
+    const { id } = context.params;
     await connectDB();
 
     const quiz = await Quiz.findByIdAndDelete(id);
