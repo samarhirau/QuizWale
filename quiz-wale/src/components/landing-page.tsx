@@ -101,7 +101,11 @@ useEffect(() => {
         const popularQuizzes = [...allQuizzes]
           .sort((a, b) => (b.questions?.length || 0) - (a.questions?.length || 0))
           .slice(0, 5)
-        const topRatedQuizzes = [...allQuizzes].slice(0, 5) // You can add rating logic here
+     // You can add rating logic here
+        const topRatedQuizzes = [...allQuizzes]
+          .sort((a, b) => (b.rating || 0) - (a.rating || 0))
+          .slice(0, 5)
+     
 
         setStats({
           totalQuizzes: allQuizzes.length,
@@ -344,7 +348,7 @@ useEffect(() => {
                           `/placeholder.svg?height=120&width=256&text=${encodeURIComponent(quiz.title) || "/placeholder.svg"}`
                         }
                         alt={quiz.title}
-                        className="w-full h-50 object-cover"
+                        className="w-full h-50 object-fill"
                       />
                       <Badge
                         className={`absolute top-2 left-2 ${getDifficultyColor(quiz.difficulty)} text-white text-xs`}
@@ -383,12 +387,12 @@ useEffect(() => {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {categories.slice(0, 8).map((category, index) => (
-                <Card key={category.name} className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
+                <Card key={category.name} className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer py-0 gap-1">
                   <div className="relative">
                     <img
-                      src={`/placeholder.svg?height=120&width=300&text=${encodeURIComponent(category.name)}`}
+                      src={category.quizzes[0]?.imageUrl || `/placeholder.svg?height=120&width=256&text=${encodeURIComponent(category.name)}`}
                       alt={category.name}
-                      className="w-full h-32 object-cover"
+                      className="w-full h-50 object-fill"
                     />
                     <Badge className="absolute top-2 left-2 bg-blue-500 text-white text-xs">CATEGORY</Badge>
                   </div>
@@ -538,12 +542,12 @@ useEffect(() => {
           <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
             {stats.topRatedQuizzes.map((quiz) => (
               <div key={quiz._id} className="flex-shrink-0 w-64">
-                <Card className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
+                <Card className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer py-0 gap-1">
                   <div className="relative">
                     <img
-                      src={`/placeholder.svg?height=120&width=256&text=${encodeURIComponent(quiz.title)}`}
+                      src={quiz.imageUrl || `/placeholder.svg?height=120&width=256&text=${encodeURIComponent(quiz.title)}`}
                       alt={quiz.title}
-                      className="w-full h-32 object-cover"
+                      className="w-full h-50 object-fill"
                     />
                     <Badge
                       className={`absolute top-2 left-2 ${getDifficultyColor(quiz.difficulty)} text-white text-xs`}
@@ -580,12 +584,12 @@ useEffect(() => {
           <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
             {stats.popularQuizzes.map((quiz) => (
               <div key={quiz._id} className="flex-shrink-0 w-64">
-                <Card className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
+                <Card className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer py-0 gap-1">
                   <div className="relative">
                     <img
-                      src={`/placeholder.svg?height=120&width=256&text=${encodeURIComponent(quiz.title)}`}
+                      src={`${quiz.imageUrl || `/placeholder.svg?height=120&width=256&text=${encodeURIComponent(quiz.title)}`}`}
                       alt={quiz.title}
-                      className="w-full h-32 object-cover"
+                      className="w-full h-50 object-fill"
                     />
                     <Badge
                       className={`absolute top-2 left-2 ${getDifficultyColor(quiz.difficulty)} text-white text-xs`}
@@ -597,10 +601,11 @@ useEffect(() => {
                     <h4 className="font-semibold text-sm mb-2 truncate">{quiz.title}</h4>
                     <div className="flex items-center justify-between text-xs text-gray-600 dark:text-gray-400">
                       <div className="flex items-center gap-1">
-                        <span className="text-yellow-500">★</span>
+                        <span className="text-yellow-500">★ {quiz.rating}</span>
                         
                       </div>
                     </div>
+                    
                     <div className="mt-2 text-xs text-gray-500">
                       {quiz.category} • {formatDuration(quiz.duration)}
                     </div>

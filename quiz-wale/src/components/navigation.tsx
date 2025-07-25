@@ -72,6 +72,7 @@ import { Button } from "@/components/ui/button"
 import { ModeToggle } from "@/components/mode-toggle"
 import { LogoutConfirmDialog } from "@/components/logout-dialog" // Import the new component
 import { LayoutDashboard, Trophy, Settings, BarChart3, LogOut, BookOpen, BrainCircuit } from "lucide-react"
+import Link from "next/link"
 
 interface NavigationProps {
   currentView: string
@@ -104,10 +105,11 @@ export function Navigation({ currentView, onViewChange }: NavigationProps) {
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center space-x-8">
+           <Link href="/">
             <div className="flex items-center space-x-2">
                <BrainCircuit className="h-6 w-6 text-primary" />
              <span className="text-xl font-bold ">QuizWale</span>
-            </div>
+            </div></Link>
 
             <div className="hidden md:flex space-x-4">
               {navItems.map((item) => (
