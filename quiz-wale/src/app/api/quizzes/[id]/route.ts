@@ -5,12 +5,13 @@ import Submission from "@/models/Submission";
 import { getServerSession } from "@/lib/auth";
 
 // GET - Fetch single quiz (with or without answers based on role)
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, context: { params: { id: string } }) {
+  const { id } = context.params;
   try {
     await connectDB();
 
     const session = await getServerSession();
-    const quiz = await Quiz.findById(params.id).populate("createdBy", "name");
+    const quiz = await Quiz.findById(id).populate("createdBy", "name");
 
     if (!quiz) {
       return NextResponse.json({ error: "Quiz not found" }, { status: 404 });
@@ -32,7 +33,8 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 }
 
 // PUT - Update quiz
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(request: NextRequest, context: { params: { id: string } }) {
+  const { id } = context.params;
   try {
     const session = await getServerSession();
 
@@ -43,7 +45,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     const updates = await request.json();
     await connectDB();
 
-    const quiz = await Quiz.findByIdAndUpdate(params.id, updates, {
+    const quiz = await Quiz.findByIdAndUpdate(id, updates, {
       new: true,
       runValidators: true,
     });
@@ -60,7 +62,8 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 }
 
 // DELETE - Remove quiz and its submissions
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, context: { params: { id: string } }) {
+  const { id } = context.params;
   try {
     const session = await getServerSession();
 
@@ -70,14 +73,14 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
 
     await connectDB();
 
-    const quiz = await Quiz.findByIdAndDelete(params.id);
+    const quiz = await Quiz.findByIdAndDelete(id);
 
     if (!quiz) {
       return NextResponse.json({ error: "Quiz not found" }, { status: 404 });
     }
 
     // Delete all submissions related to this quiz
-    await Submission.deleteMany({ quizId: params.id });
+    await Submission.deleteMany({ quizId: id });
 
     return NextResponse.json({ message: "Quiz deleted successfully" });
   } catch (error) {
