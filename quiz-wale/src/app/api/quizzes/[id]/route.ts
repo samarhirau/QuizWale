@@ -32,6 +32,8 @@ import { getServerSession } from "@/lib/auth"
 //     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
 //   }
 // }
+
+
 export async function GET(request: NextRequest) {
   try {
     await connectDB()
@@ -39,7 +41,7 @@ export async function GET(request: NextRequest) {
     const session = await getServerSession()
 
     const url = new URL(request.url)
-    const id = url.pathname.split("/").pop() // gets ID from URL
+    const id = url.pathname.split("/").pop()
 
     const quiz = await Quiz.findById(id).populate("createdBy", "name")
 
@@ -56,7 +58,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ quiz })
   } catch (error) {
-    console.error("Get quiz error:", error)
+    console.error("GET error:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
