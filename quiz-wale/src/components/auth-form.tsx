@@ -9,9 +9,10 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { useToast } from "@/hooks/use-toast"
+// import { useToast } from "@/hooks/use-toast"
 import { Mail, Lock, User, BrainCircuit } from "lucide-react"
 import { useSearchParams } from "next/navigation"
+import {toast} from "sonner"
 
 import { useRouter } from "next/navigation"
 
@@ -24,7 +25,7 @@ interface AuthFormProps {
 export function AuthForm({ initialTab }: AuthFormProps) {
   const [isLoading, setIsLoading] = useState(false)
   const { login, register } = useAuth()
-  const { toast } = useToast()
+  // const { toast } = useToast()
   const searchParams = useSearchParams()
   const router = useRouter()
 
@@ -50,17 +51,10 @@ export function AuthForm({ initialTab }: AuthFormProps) {
 
     try {
       await login(loginData.email, loginData.password)
-      toast({
-        title: "Welcome back!",
-        description: "You have been successfully logged in.",
-      })
+      toast.success("You have been successfully logged in!")
        router.push("/dashboard")
     } catch (error: any) {
-      toast({
-        title: "Login failed",
-        description: error.message,
-        variant: "destructive",
-      })
+      toast.error("Login failed: ");
     } finally {
       setIsLoading(false)
     }
@@ -70,11 +64,7 @@ export function AuthForm({ initialTab }: AuthFormProps) {
     e.preventDefault()
 
     if (registerData.password !== registerData.confirmPassword) {
-      toast({
-        title: "Password mismatch",
-        description: "Passwords do not match.",
-        variant: "destructive",
-      })
+      toast.error("Passwords do not match")
       return
     }
 
@@ -82,17 +72,10 @@ export function AuthForm({ initialTab }: AuthFormProps) {
 
     try {
       await register(registerData.email, registerData.password, registerData.name)
-      toast({
-        title: "Account created!",
-        description: "Welcome to Quizwale.",
-      })
+      toast.success("Registration successful! You can now log in.")
        router.push("/dashboard")
     } catch (error: any) {
-      toast({
-        title: "Registration failed",
-        description: error.message,
-        variant: "destructive",
-      })
+      toast.error("Registration failed: " + error.message)
     } finally {
       setIsLoading(false)
     }

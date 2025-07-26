@@ -71,7 +71,7 @@ import { useAuth } from "@/components/auth-provider"
 import { Button } from "@/components/ui/button"
 import { ModeToggle } from "@/components/mode-toggle"
 import { LogoutConfirmDialog } from "@/components/logout-dialog" // Import the new component
-import { LayoutDashboard, Trophy, Settings, BarChart3, LogOut, BookOpen, BrainCircuit } from "lucide-react"
+import { LayoutDashboard, Trophy, Settings, BarChart3, LogOut, BrainCircuit } from "lucide-react"
 import Link from "next/link"
 
 interface NavigationProps {
