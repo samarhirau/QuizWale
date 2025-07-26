@@ -9,9 +9,10 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
-import { useToast } from "@/hooks/use-toast"
+// import { useToast } from "@/hooks/use-toast"
 import { Plus, Edit, Trash2, Save, X, BookOpen, Users, BarChart3, Clock, Target, Star } from "lucide-react"
 import {ImageUpload} from "@/components/image-upload"
+import { toast } from 'sonner';
 
 interface Question {
   questionText: string
@@ -57,7 +58,7 @@ export function AdminDashboard() {
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [editingQuiz, setEditingQuiz] = useState<Quiz | null>(null)
   const [loading, setLoading] = useState(true)
-  const { toast } = useToast()
+
 
   const [newQuiz, setNewQuiz] = useState<Quiz>({
     title: "",
@@ -105,11 +106,7 @@ export function AdminDashboard() {
       }
     } catch (error) {
       console.error("Error fetching data:", error)
-      toast({
-        title: "Error",
-        description: "Failed to fetch data",
-        variant: "destructive",
-      })
+      toast.error("Failed to load data")
     } finally {
       setLoading(false)
     }
@@ -117,11 +114,7 @@ export function AdminDashboard() {
 
   const handleCreateQuiz = async () => {
     if (!newQuiz.title || !newQuiz.description || !newQuiz.category || newQuiz.questions.length === 0) {
-      toast({
-        title: "Validation Error",
-        description: "Please fill in all required fields and add at least one question",
-        variant: "destructive",
-      })
+      toast.error("Please fill in all required fields and add at least one question")
       return
     }
 
@@ -137,64 +130,45 @@ export function AdminDashboard() {
         setQuizzes([data.quiz, ...quizzes])
         resetNewQuiz()
         setShowCreateForm(false)
-        toast({
-          title: "Success",
-          description: "Quiz created successfully",
-        })
+        toast.success("Quiz created successfully");
+
         console.log("Sending quiz:", newQuiz)
 
         
       } else {
         const errorData = await response.json()
-        toast({
-          title: "Error",
-          description: errorData.error || "Failed to create quiz",
-          variant: "destructive",
-        })
+        toast.error(errorData.error || "Failed to create quiz")
       }
     } catch (error) {
       console.error("Error creating quiz:", error)
-      toast({
-        title: "Error",
-        description: "Failed to create quiz",
-        variant: "destructive",
-      })
+      toast.error("Failed to create quiz")
     }
   }
 
-  const handleUpdateQuiz = async (quizId: string, updates: Partial<Quiz>) => {
-    try {
-      const response = await fetch(`/api/quizzes/${quizId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updates),
-      })
+  // const handleUpdateQuiz = async (quizId: string, updates: Partial<Quiz>) => {
+  //   try {
+  //     const response = await fetch(`/api/quizzes/${quizId}`, {
+  //       method: "PUT",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify(updates),
+  //     })
 
-      if (response.ok) {
-        const data = await response.json()
-        setQuizzes(quizzes.map((q) => (q._id === quizId ? data.quiz : q)))
-        setEditingQuiz(null)
-        toast({
-          title: "Success",
-          description: "Quiz updated successfully",
-        })
-      } else {
-        const errorData = await response.json()
-        toast({
-          title: "Error",
-          description: errorData.error || "Failed to update quiz",
-          variant: "destructive",
-        })
-      }
-    } catch (error) {
-      console.error("Error updating quiz:", error)
-      toast({
-        title: "Error",
-        description: "Failed to update quiz",
-        variant: "destructive",
-      })
-    }
-  }
+  //     if (response.ok) {
+  //       const data = await response.json()
+  //       setQuizzes(quizzes.map((q) => (q._id === quizId ? data.quiz : q)))
+  //       setEditingQuiz(null)
+  //       toast.success("Quiz updated successfully")  
+  //     } else {
+  //       const errorData = await response.json()
+  //       toast.error(errorData.error || "Failed to update quiz")
+  //     }
+  //   } catch (error) {
+  //     console.error("Error updating quiz:", error)
+  //     toast.error("Failed to update quiz")
+  //   }
+  // }
+
+  
 
   const handleDeleteQuiz = async (quizId: string) => {
     if (!confirm("Are you sure you want to delete this quiz? This action cannot be undone.")) {
@@ -208,35 +182,22 @@ export function AdminDashboard() {
 
       if (response.ok) {
         setQuizzes(quizzes.filter((q) => q._id !== quizId))
-        toast({
-          title: "Success",
-          description: "Quiz deleted successfully",
-        })
+        toast.success("Quiz deleted successfully");
+
       } else {
-        const errorData = await response.json()
-        toast({
-          title: "Error",
-          description: errorData.error || "Failed to delete quiz",
-          variant: "destructive",
-        })
+        // const errorData = await response.json()
+       toast.error("Failed to delete quiz");
+
       }
     } catch (error) {
       console.error("Error deleting quiz:", error)
-      toast({
-        title: "Error",
-        description: "Failed to delete quiz",
-        variant: "destructive",
-      })
+      toast.error("Failed to delete quiz"); 
     }
   }
 
   const addQuestionToQuiz = () => {
     if (!newQuestion.questionText || newQuestion.options.some((opt) => !opt.trim()) || !newQuestion.correctAnswer) {
-      toast({
-        title: "Validation Error",
-        description: "Please fill in all question fields",
-        variant: "destructive",
-      })
+      toast.error("Please fill in all required fields for the question")
       return
     }
 
@@ -252,10 +213,7 @@ export function AdminDashboard() {
       explanation: "",
     })
 
-    toast({
-      title: "Success",
-      description: "Question added to quiz",
-    })
+    toast.success("Question added to quiz")
   }
 
   const removeQuestionFromQuiz = (index: number) => {
