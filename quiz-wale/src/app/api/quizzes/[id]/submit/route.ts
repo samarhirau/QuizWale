@@ -101,7 +101,7 @@ export async function POST(request: NextRequest, context: any) {
     }
 
     // Adjust this if your session structure is different
-    const userId = session.user?.id || session.userId; 
+    const userId =  session.userId; 
 
     const { answers, timeSpent } = await request.json();
 
