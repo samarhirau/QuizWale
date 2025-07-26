@@ -5,11 +5,8 @@ import Submission from "@/models/Submission";
 import { getServerSession } from "@/lib/auth";
 
 // GET Handler — Get quiz by ID
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  const { id } = params;
+export async function GET(request: NextRequest, context: any) {
+  const { id } = context.params;
   try {
     await connectDB();
 
@@ -36,11 +33,9 @@ export async function GET(
 }
 
 // PUT Handler — Update quiz by ID
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  const { id } = params;
+export async function PUT(request: NextRequest, context: any) {
+  const { id } = context.params;
+
   try {
     const session = await getServerSession();
 
@@ -67,11 +62,9 @@ export async function PUT(
 }
 
 // DELETE Handler — Delete quiz by ID
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  const { id } = params;
+export async function DELETE(request: NextRequest, context: any) {
+  const { id } = context.params;
+
   try {
     const session = await getServerSession();
 
