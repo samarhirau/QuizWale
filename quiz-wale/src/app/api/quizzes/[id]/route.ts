@@ -7,6 +7,7 @@ import { getServerSession } from "@/lib/auth";
 // GET Handler — Get quiz by ID
 export async function GET(request: NextRequest, context: any) {
   const { id } = context.params;
+
   try {
     await connectDB();
 
@@ -47,7 +48,6 @@ export async function PUT(request: NextRequest, context: any) {
 
     await connectDB();
 
-    // Allow updating resultsReleased field
     const quiz = await Quiz.findByIdAndUpdate(id, updates, { new: true, runValidators: true });
 
     if (!quiz) {
@@ -80,7 +80,7 @@ export async function DELETE(request: NextRequest, context: any) {
       return NextResponse.json({ error: "Quiz not found" }, { status: 404 });
     }
 
-    // Also delete all submissions for this quiz
+    // Also delete all submissions related to this quiz
     await Submission.deleteMany({ quizId: id });
 
     return NextResponse.json({ message: "Quiz deleted successfully" });
