@@ -8,6 +8,7 @@ const nextConfig: NextConfig = {
  images: {
     domains: ['quizwalev1.netlify.app', 'res.cloudinary.com', ], 
   },
+  output: 'export',
 };
 
 export default nextConfig;
