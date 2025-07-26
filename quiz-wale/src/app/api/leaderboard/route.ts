@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Aggregation pipeline for leaderboard
-    const pipeline = [
+    const pipeline: mongoose.PipelineStage[] = [
       { $match: matchFilter },
       {
         $lookup: {
@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
           as: "quizInfo",
         },
       },
-      { $unwind: "$quizInfo" },
+      { $unwind: { path: "$quizInfo" } },
       {
         $group: {
           _id: "$userId",
@@ -63,7 +63,7 @@ export async function GET(request: NextRequest) {
           as: "user",
         },
       },
-      { $unwind: "$user" },
+      { $unwind: { path: "$user" } },
       {
         $project: {
           userId: "$_id",
