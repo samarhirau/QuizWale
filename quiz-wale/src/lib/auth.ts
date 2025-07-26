@@ -5,6 +5,7 @@ import { cookies } from "next/headers"
 const JWT_SECRET = process.env.JWT_SECRET!
 
 export interface JWTPayload {
+  user: any
   userId: string
   email: string
   role: "admin" | "user"
