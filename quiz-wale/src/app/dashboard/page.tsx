@@ -55,11 +55,11 @@ interface UserStats {
   recentSubmissions: any[]
 }
 
-interface DashboardProps {
-  onStartQuiz: (id: string, viewType?: "quiz" | "submission-details") => void
-}
+// interface DashboardProps {
+//   onStartQuiz: (id: string, viewType?: "quiz" | "submission-details") => void
+// }
 
-export default function DashboardPage({ onStartQuiz }: DashboardProps) {
+export default function DashboardPage() {
   const { user } = useAuth()
   const [quizzes, setQuizzes] = useState<Quiz[]>([])
   const [filteredQuizzes, setFilteredQuizzes] = useState<Quiz[]>([])
