@@ -511,7 +511,9 @@ export default function DashboardPage() {
 
         {currentView === "quiz" && selectedQuizId && (
           <div className="container mx-auto px-4 py-8">
-            <QuizTaking quizId={selectedQuizId} onComplete={handleQuizComplete} />
+            <QuizTaking quizId={selectedQuizId} onComplete={handleQuizComplete} setCurrentView={function (view: string): void {
+              throw new Error("Function not implemented.")
+            } } />
           </div>
         )}
 
