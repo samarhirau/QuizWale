@@ -18,6 +18,7 @@ import { useRouter } from "next/navigation"
 
 interface AuthFormProps {
   initialTab?: "login" | "register" 
+   onClose?: () => void; 
 }
 
 export function AuthForm({ initialTab }: AuthFormProps) {

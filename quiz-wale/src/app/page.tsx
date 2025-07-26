@@ -9,7 +9,7 @@ import { useState } from "react"
 
 
 export default function Home() {
-  const { user, loading, refreshUser } = useAuth()
+  const { user, loading,  } = useAuth()
   
   const [showAuthFormSection, setShowAuthFormSection] = useState(false) // State to control AuthForm visibility
   const [authFormInitialTab, setAuthFormInitialTab] = useState<"login" | "register">("login") // State for initial tab
