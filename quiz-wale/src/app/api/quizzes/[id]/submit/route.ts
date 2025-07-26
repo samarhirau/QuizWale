@@ -90,7 +90,9 @@ import Submission from "@/models/Submission";
 import User from "@/models/User";
 import { getServerSession } from "@/lib/auth";
 
-export async function POST(request: NextRequest, { params }: any) {
+export async function POST(request: NextRequest, context: any) {
+  const { id } = context.params;
+
   try {
     const session = await getServerSession();
 
@@ -105,14 +107,14 @@ export async function POST(request: NextRequest, { params }: any) {
 
     await connectDB();
 
-    const quiz = await Quiz.findById(params.id);
+    const quiz = await Quiz.findById(id);
     if (!quiz) {
       return NextResponse.json({ error: "Quiz not found" }, { status: 404 });
     }
 
     const existingSubmissionsCount = await Submission.countDocuments({
       userId,
-      quizId: params.id,
+      quizId: id,
     });
 
     if (existingSubmissionsCount >= quiz.maxAttempts) {
@@ -143,7 +145,7 @@ export async function POST(request: NextRequest, { params }: any) {
 
     const submission = await Submission.create({
       userId,
-      quizId: params.id,
+      quizId: id,
       answers: detailedAnswers,
       score,
       percentage,
