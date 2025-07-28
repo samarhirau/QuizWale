@@ -5,7 +5,7 @@ import Submission from "@/models/Submission";
 import { getServerSession } from "@/lib/auth";
 
 // GET Handler — Get quiz by ID
-export async function GET(request: NextRequest, context: any) {
+export async function GET(context: any) {
   const { id } = context.params;
 
   try {
@@ -62,7 +62,7 @@ export async function PUT(request: NextRequest, context: any) {
 }
 
 // DELETE Handler — Delete quiz by ID
-export async function DELETE(request: NextRequest, context: any) {
+export async function DELETE(context: any) {
   const { id } = context.params;
 
   try {

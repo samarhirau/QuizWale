@@ -77,13 +77,13 @@
 // }
 
 
-import { type NextRequest, NextResponse } from "next/server"
+import { NextResponse } from "next/server"
 import connectDB from "@/lib/mongodb"
 import Submission from "@/models/Submission"
 import { getServerSession } from "@/lib/auth"
 import mongoose from "mongoose"
 
-export async function GET(request: NextRequest, { params }: any) {
+export async function GET({ params }: any) {
   try {
     const session = await getServerSession()
 
