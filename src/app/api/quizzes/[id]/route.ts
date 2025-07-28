@@ -5,7 +5,7 @@ import Submission from "@/models/Submission";
 import { getServerSession } from "@/lib/auth";
 
 // GET Handler — Get quiz by ID
-export async function GET(context: any) {
+export async function GET( request: NextRequest, context: any) {
   const { id } = context.params;
 
   try {

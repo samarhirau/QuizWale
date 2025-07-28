@@ -98,7 +98,7 @@ export function QuizTaking({ quizId, onComplete, setCurrentView }: QuizTakingPro
       }
     } catch (error) {
       console.error("Error fetching quiz:", error)
-      toast.error("Failed to load quiz")
+      toast.error("Failed to load quiz facing an error")
       onComplete()
     } finally {
       setLoading(false)
