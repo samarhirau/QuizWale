@@ -8,6 +8,8 @@ import Link from "next/link"
 import { ModeToggle } from "./mode-toggle"
 import { useEffect, useState } from "react"
 import { useAuth } from "@/components/auth-provider"
+import { useRouter } from "next/navigation"
+import { QuizTaking } from "./quiz-taking"
 
 
 interface Quiz {
@@ -37,6 +39,8 @@ interface Stats {
   participants: number;
 }
 
+
+
 interface LandingPageProps {
   onShowAuthForm: (tab: "login" | "register") => void // New prop to trigger AuthForm visibility and set tab
 }
@@ -55,10 +59,28 @@ export function LandingPage({ onShowAuthForm }: LandingPageProps) {
     participants : 0,
 
   })
+   const [selectedQuizId, setSelectedQuizId] = useState<string | null>(null)
+    const [currentView, setCurrentView] = useState("/")
+
+const router = useRouter()
+
+
+
+    const handleStartQuiz = (quizId: string) => {
+    setSelectedQuizId(quizId)
+    setCurrentView("quiz")
+  }
+
+    const handleQuizComplete = () => {
+    setSelectedQuizId(null)
+    router.push("/dashboard") 
+  
+  }
+
 const { user } = useAuth()
  const [stat, setStat] = useState({ participants: 0, totalSubmissions: 0 });
 
-  
+
 
 useEffect(() => {
   const fetchStat = async () => {
@@ -146,6 +168,8 @@ useEffect(() => {
     return `${minutes} min`
   }
 
+   
+
 
   
   
@@ -160,6 +184,24 @@ useEffect(() => {
       </div>
     )
   }
+
+  if (currentView === "quiz") {
+    return (
+      <QuizTaking
+        quizId={selectedQuizId!}
+        onComplete={handleQuizComplete}
+        setCurrentView={function (view: string): void {
+          throw new Error("Function not implemented.")
+          
+        }}
+      />
+    )
+  }
+  if (currentView === "dashboard") {
+    router.push("/dashboard")
+    return null 
+  }
+
   return (
     <div className="flex flex-col min-h-screen">
       
@@ -338,39 +380,44 @@ useEffect(() => {
               </Link>
             </div>
             <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
-              {stats.recentQuizzes.map((quiz, index) => (
-                <div key={quiz._id} className="flex-shrink-0 w-64">
-                  <Card className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer py-0 gap-1">
-                    <div className="relative">
-                       <img
-                        src={
-                          quiz.imageUrl ||
-                          `/placeholder.svg?height=120&width=256&text=${encodeURIComponent(quiz.title) || "/placeholder.svg"}`
-                        }
-                        alt={quiz.title}
-                        className="w-full h-50 object-fill"
-                      />
-                      <Badge
-                        className={`absolute top-2 left-2 ${getDifficultyColor(quiz.difficulty)} text-white text-xs`}
-                      >
-                        {getDifficultyBadge(quiz.difficulty)}
-                      </Badge>
-                    </div>
-                    <CardContent className="py-2 px-4">
-                      <h4 className="font-semibold text-sm mb-2 truncate">{quiz.title}</h4>
-                      <div className="flex items-center justify-between text-xs text-gray-600 dark:text-gray-400">
-                        <div className="flex items-center gap-1">
-                          <span className="text-yellow-500">★</span>
-                          <span>{quiz.rating || "N/A"}</span>
-                        </div>
-                      </div>
-                      <div className="mt-2 text-xs text-gray-500">
-                        {quiz.questions?.length || 0} questions • {formatDuration(quiz.duration)}
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-              ))}
+             {stats.recentQuizzes.map((quiz) => (
+  <div key={quiz._id} className="flex-shrink-0 w-64">
+    <Card 
+      className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer py-0 gap-1"
+      onClick={ user ? () => handleStartQuiz(quiz._id) : () => onShowAuthForm("login") } 
+    >
+      <div className="relative">
+        <img
+          src={
+            quiz.imageUrl ||
+            `/placeholder.svg?height=120&width=256&text=${encodeURIComponent(quiz.title)}`
+          }
+          alt={quiz.title}
+          className="w-full h-50 object-fill"
+                                     
+        />
+        <Badge
+          className={`absolute top-2 left-2 ${getDifficultyColor(quiz.difficulty)} text-white text-xs`}
+        >
+          {getDifficultyBadge(quiz.difficulty)}
+        </Badge>
+      </div>
+      <CardContent className="py-2 px-4">
+        <h4 className="font-semibold text-sm mb-2 truncate">{quiz.title}</h4>
+        <div className="flex items-center justify-between text-xs text-gray-600 dark:text-gray-400">
+          <div className="flex items-center gap-1">
+            <span className="text-yellow-500">★</span>
+            <span>{quiz.rating || "N/A"}</span>
+          </div>
+        </div>
+        <div className="mt-2 text-xs text-gray-500">
+          {quiz.questions?.length || 0} questions • {formatDuration(quiz.duration)}
+        </div>
+      </CardContent>
+    </Card>
+  </div>
+))}   
+
               {stats.recentQuizzes.length === 0 && (
                 <div className="text-center text-gray-500 w-full py-8">No quizzes available yet.</div>
               )}
@@ -642,6 +689,9 @@ useEffect(() => {
         </div>
       </section>
 
+    
+      
+
       {/* Footer */}
       <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 border-t bg-white dark:bg-gray-950">
         <p className="text-xs text-gray-500 dark:text-gray-400">© {new Date().getFullYear()} QuizWale. All rights reserved.</p>
@@ -658,3 +708,4 @@ useEffect(() => {
     </div>
   )
 }
+

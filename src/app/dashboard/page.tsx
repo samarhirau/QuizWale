@@ -82,7 +82,7 @@ export default function DashboardPage() {
 
   const fetchDashboardData = async () => {
     try {
-      const [quizzesRes, statsRes] = await Promise.all([fetch("/api/quizzes"), fetch("/api/user/stats")])
+      const [quizzesRes, statsRes] = await Promise.all([fetch("/api/quizzes?limit=100"), fetch("/api/user/stats")])
 
       if (quizzesRes.ok) {
         const quizzesData = await quizzesRes.json()
