@@ -6,7 +6,7 @@ import { getServerSession } from "@/lib/auth";
 
 // GET Handler — Get quiz by ID
 export async function GET( request: NextRequest, context: any) {
-  const { id } = context.params;
+  const { id } = await context.params;
 
   try {
     await connectDB();
