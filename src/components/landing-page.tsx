@@ -190,10 +190,6 @@ useEffect(() => {
       <QuizTaking
         quizId={selectedQuizId!}
         onComplete={handleQuizComplete}
-        setCurrentView={function (view: string): void {
-          throw new Error("Function not implemented.")
-          
-        }}
       />
     )
   }
