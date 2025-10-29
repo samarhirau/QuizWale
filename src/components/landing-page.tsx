@@ -566,9 +566,14 @@ useEffect(() => {
                 <div className="flex-1">
                   <h3 className="text-2xl font-bold mb-2">A.I.</h3>
                   <p className="text-teal-100 mb-4">Generate a quiz from any subject or pdf</p>
-                  <Button className="bg-cyan-400 hover:bg-cyan-500 text-black font-semibold px-6 py-2 rounded-full">
+                  {/* <Button className="bg-cyan-400 hover:bg-cyan-500 text-black font-semibold px-6 py-2 rounded-full">
                     Quiz generator
-                  </Button>
+                  </Button> */}
+                  <Link href="/ai-quiz">
+  <Button className="bg-cyan-400 hover:bg-cyan-500 text-black font-semibold px-6 py-2 rounded-full">
+    Quiz generator
+  </Button>
+</Link>
                 </div>
               </CardContent>
             </Card>
